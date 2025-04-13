@@ -1,12 +1,25 @@
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import Navbar from "./components/landingNav";
 
 export default function Home() {
   return (
-    <div className="pt-8 px-5 font-[family-name:var(--font-geist-sans)] justify-items-center space-y-5">
-      <h1 className="font-bold">Optimize your Calories with OptiKcal</h1>
-      <Button className="hover:bg-gray-600 active:bg-gray-700"><Link href="/signup">Get Started</Link></Button>
-    </div>
+    <main className="min-h-screen flex-col items-center justify-center">
+      <Navbar />
+      <div className="max-w-3xl text-center pt-25 p-4">
+        <h1 className="text-4xl font-bold mb-6">Weight Tracker</h1>
+        <p className="text-lg mb-8">
+          Track your weight, set goals, and achieve your fitness targets
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button asChild size="lg">
+            <Link href="/signup">Sign Up</Link>
+          </Button>
+          <Button asChild variant="outline" size="lg">
+            <Link href="/login">Login</Link>
+          </Button>
+        </div>
+      </div>
+    </main>
   );
 }
