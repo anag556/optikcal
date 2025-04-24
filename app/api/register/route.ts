@@ -33,6 +33,33 @@ function calculateMaintenanceCalories(
   return Math.round(bmr * activityMultipliers[activityLevel as keyof typeof activityMultipliers]);
 }
 
+// New helper function to calculate macronutrients
+interface MacroNutrients {
+  protein: number;
+  carbs: number;
+  fats: number;
+}
+
+function calculateMacronutrients(maintenanceCalories: number, weight: number): MacroNutrients {
+  // Protein: 2g per kg of body weight
+  const proteinInGrams = weight * 2;
+  const proteinCalories = proteinInGrams * 4; // 4 calories per gram of protein
+
+  // Fats: 25% of total calories
+  const fatCalories = maintenanceCalories * 0.25;
+  const fatInGrams = Math.round(fatCalories / 9); // 9 calories per gram of fat
+
+  // Remaining calories go to carbs
+  const carbCalories = maintenanceCalories - proteinCalories - fatCalories;
+  const carbInGrams = Math.round(carbCalories / 4); // 4 calories per gram of carbs
+
+  return {
+    protein: Math.round(proteinInGrams),
+    carbs: carbInGrams,
+    fats: fatInGrams
+  };
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -79,6 +106,9 @@ export async function POST(request: Request) {
       activityLevel
     );
 
+    // Calculate macronutrients
+    const macros = calculateMacronutrients(maintenanceCalories, currentWeight);
+
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -94,13 +124,22 @@ export async function POST(request: Request) {
       goalWeight,
       targetWeeks,
       activityLevel,
-      maintenanceCalories
+      maintenanceCalories,
+      macronutrients: {
+        protein: macros.protein,
+        carbs: macros.carbs,
+        fats: macros.fats
+      }
     });
 
     await newUser.save();
 
     return NextResponse.json(
-      { success: true, message: "User registered successfully" },
+      { 
+        success: true, 
+        message: "User registered successfully",
+        macronutrients: macros // Optional: return macros in response
+      },
       { status: 201 }
     );
   } catch (error) {

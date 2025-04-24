@@ -12,6 +12,7 @@ export interface UserDocument extends mongoose.Document {
   targetWeeks: number;
   activityLevel: 'sedentary' | 'light' | 'moderate' | 'active' | 'very-active';
   maintenanceCalories: number;
+  macronutrients: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -63,6 +64,11 @@ const UserSchema = new Schema<UserDocument>({
   maintenanceCalories: {
     type: Number,
     required: true,
+  },
+  macronutrients: {
+    protein: { type: Number, required: true },
+    carbs: { type: Number, required: true },
+    fats: { type: Number, required: true }
   },
 }, {
   timestamps: true,
