@@ -81,3 +81,53 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    await connectToDatabase();
+    
+    // Get the food log ID from the URL
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    
+    if (!id) {
+      return NextResponse.json({ error: 'Food log ID is required' }, { status: 400 });
+    }
+
+    // Find the user's ID from their email
+    const User = mongoose.models.User;
+    const user = await User.findOne({ email: session.user.email });
+    
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    const data = await request.json();
+    // Remove _id and userId from update data for security
+    const { _id, userId, ...updateData } = data;
+
+    // Find and update the food log, ensuring it belongs to the user
+    const foodLog = await FoodLog.findOneAndUpdate(
+      { _id: id, userId: user._id },
+      updateData,
+      { new: true }
+    );
+
+    if (!foodLog) {
+      return NextResponse.json({ error: 'Food log not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(foodLog);
+  } catch (error) {
+    console.error('Error updating food log:', error);
+    return NextResponse.json(
+      { error: 'Failed to update food log' },
+      { status: 500 }
+    );
+  }
+}

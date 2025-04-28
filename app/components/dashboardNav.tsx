@@ -16,10 +16,10 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
-    { label: "Log", href: "/log" },
-    { label: "Calendar", href: "/calendar" },
+    { label: "Dashboard", href: "/dashboard" },
+    { label: "Log Meal", href: "/log" },
+    { label: "My Log", href: "/calendar" },
     { label: "Profile", href: "/profile" },
-    { label: "Settings", href: "/settings" },
   ];
 
   return (
