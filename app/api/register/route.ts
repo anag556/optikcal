@@ -38,6 +38,7 @@ interface MacroNutrients {
   protein: number;
   carbs: number;
   fats: number;
+  fiber: number;
 }
 
 function calculateMacronutrients(maintenanceCalories: number, weight: number): MacroNutrients {
@@ -53,11 +54,40 @@ function calculateMacronutrients(maintenanceCalories: number, weight: number): M
   const carbCalories = maintenanceCalories - proteinCalories - fatCalories;
   const carbInGrams = Math.round(carbCalories / 4); // 4 calories per gram of carbs
 
+  // Fiber: recommended 14g per 1000 calories
+  const fiberInGrams = Math.round((maintenanceCalories / 1000) * 14);
+
   return {
     protein: Math.round(proteinInGrams),
     carbs: carbInGrams,
-    fats: fatInGrams
+    fats: fatInGrams,
+    fiber: fiberInGrams
   };
+}
+
+function calculateDailyCalorieTarget(
+  currentWeight: number,
+  goalWeight: number,
+  targetWeeks: number,
+  maintenanceCalories: number
+): number {
+  // Calculate total weight difference
+  const weightDifference = goalWeight - currentWeight; // Negative for weight loss, positive for gain
+  
+  // Calculate required weekly weight change
+  const weeklyWeightChange = weightDifference / targetWeeks;
+  
+  // 1 pound of fat = 3500 calories
+  // 1 kg of fat = 7700 calories
+  const CALORIES_PER_KG = 7700;
+  
+  // Calculate daily calorie adjustment needed
+  const dailyCalorieAdjustment = (weeklyWeightChange * CALORIES_PER_KG) / 7;
+  
+  // Add the adjustment to maintenance calories
+  const dailyCalorieTarget = Math.round(maintenanceCalories + dailyCalorieAdjustment);
+  
+  return dailyCalorieTarget;
 }
 
 export async function POST(request: Request) {
@@ -106,6 +136,14 @@ export async function POST(request: Request) {
       activityLevel
     );
 
+    // Calculate daily calorie target
+    const dailyCalorieTarget = calculateDailyCalorieTarget(
+      currentWeight,
+      goalWeight,
+      targetWeeks,
+      maintenanceCalories
+    );
+
     // Calculate macronutrients
     const macros = calculateMacronutrients(maintenanceCalories, currentWeight);
 
@@ -125,10 +163,12 @@ export async function POST(request: Request) {
       targetWeeks,
       activityLevel,
       maintenanceCalories,
+      dailyCalorieTarget,
       macronutrients: {
         protein: macros.protein,
         carbs: macros.carbs,
-        fats: macros.fats
+        fats: macros.fats,
+        fiber: macros.fiber
       }
     });
 

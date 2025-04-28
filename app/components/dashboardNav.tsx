@@ -26,7 +26,7 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4 md:px-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
+        <Link href="/dashboard" className="flex items-center space-x-2">
           <Image 
             src="/icon.svg" 
             alt="Logo" 
@@ -52,11 +52,8 @@ const Navbar = () => {
 
         {/* Action Buttons - Desktop */}
         <div className="hidden md:flex items-center gap-4">
-          <Button variant="outline" size="sm">
-            Log In
-          </Button>
-          <Button size="sm">
-            Sign Up
+          <Button variant="destructive" size="sm" onClick={() => signOut({ callbackUrl: "/" })}>
+            Sign Out
           </Button>
         </div>
 
@@ -85,7 +82,7 @@ const Navbar = () => {
                 </Link>
               ))}
               <div className="flex flex-col gap-2 px-6 pt-4">
-                <Button variant="outline" className="w-full justify-start" onClick={() => signOut({ callbackUrl: "/" })}>
+                <Button variant="destructive" className="w-full justify-start" onClick={() => signOut({ callbackUrl: "/" })}>
                   Sign Out
                 </Button>
               </div>
