@@ -41,7 +41,7 @@ function calculateDailyCalorieTarget(
 }
 
 function calculateMacronutrients(maintenanceCalories: number, weight: number) {
-  const proteinPerKg = 2.2;
+  const proteinPerKg = 2;
   const protein = Math.round(weight * proteinPerKg);
   const proteinCalories = protein * 4;
   
