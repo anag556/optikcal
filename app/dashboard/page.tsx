@@ -113,7 +113,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <h1 className="text-2xl md:text-3xl font-bold">Dashboard</h1>
             <Button asChild>
-              <Link href="/log">Log Meal</Link>
+              <Link href="/food-log">Log Meal</Link>
             </Button>
           </div>
 

@@ -16,23 +16,18 @@ import { Progress } from "@/components/ui/progress";
 
 // Form schema for all form data
 const signupSchema = z.object({
-  // Step 1: Account details
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string(),
-  
-  // Step 2: Personal information
-  age: z.string().min(1, "Age is required").transform(Number),
+  age: z.coerce.number().min(1, "Age is required"),
   gender: z.enum(["male", "female", "other"], {
     required_error: "Please select a gender",
   }),
-  height: z.string().min(1, "Height is required").transform(Number),
-  currentWeight: z.string().min(1, "Current weight is required").transform(Number),
-  
-  // Step 3: Weight goals
-  goalWeight: z.string().min(1, "Goal weight is required").transform(Number),
-  targetWeeks: z.string().min(1, "Target weeks is required").transform(Number),
+  height: z.coerce.number().min(1, "Height is required"),
+  currentWeight: z.coerce.number().min(1, "Current weight is required"),
+  goalWeight: z.coerce.number().min(1, "Goal weight is required"),
+  targetWeeks: z.coerce.number().min(1, "Target weeks is required"),
   activityLevel: z.enum(["sedentary", "light", "moderate", "active", "very-active"], {
     required_error: "Please select your activity level",
   }),
@@ -43,6 +38,20 @@ const signupSchema = z.object({
 
 type SignupFormValues = z.infer<typeof signupSchema>;
 
+const defaultValues: SignupFormValues = {
+  name: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  age: 0,
+  gender: "male",
+  height: 0,
+  currentWeight: 0,
+  goalWeight: 0,
+  targetWeeks: 0,
+  activityLevel: "sedentary",
+};
+
 export default function SignupForm() {
   const [step, setStep] = useState<number>(1);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -52,19 +61,7 @@ export default function SignupForm() {
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      age: "",
-      gender: undefined,
-      height: "",
-      currentWeight: "",
-      goalWeight: "",
-      targetWeeks: "",
-      activityLevel: undefined,
-    },
+    defaultValues,
     mode: "onChange",
   });
 
@@ -345,29 +342,31 @@ export default function SignupForm() {
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex justify-between">
-        {step > 1 ? (
-          <Button variant="outline" onClick={handlePrevious} disabled={isSubmitting}>
-            Previous
-          </Button>
-        ) : (
-          <div></div>
-        )}
-        {step < totalSteps ? (
-          <Button 
-            onClick={handleNext} 
-            disabled={isSubmitting}
-          >
-            Next
-          </Button>
-        ) : (
-          <Button 
-            onClick={form.handleSubmit(onSubmit)} 
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Processing..." : "Sign Up"}
-          </Button>
-        )}
+      <CardFooter className="flex flex-col gap-4">
+        <div className="flex w-full justify-between">
+          {step > 1 ? (
+            <Button variant="outline" onClick={handlePrevious} disabled={isSubmitting}>
+              Previous
+            </Button>
+          ) : (
+            <div></div>
+          )}
+          {step < totalSteps ? (
+            <Button onClick={handleNext} disabled={isSubmitting}>
+              Next
+            </Button>
+          ) : (
+            <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={isSubmitting}>
+              {isSubmitting ? "Processing..." : "Sign Up"}
+            </Button>
+          )}
+        </div>
+        <p className="text-sm text-center text-muted-foreground">
+          Already have an account?{" "}
+          <a href="/login" className="text-primary hover:underline">
+            Log in
+          </a>
+        </p>
       </CardFooter>
     </Card>
   );

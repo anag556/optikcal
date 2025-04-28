@@ -55,6 +55,11 @@ export default function ProfilePage() {
 
   const handleEdit = (field: string) => {
     setEditingField(field);
+    // Ensure we maintain the current value when editing starts
+    setTempValues((prev) => ({
+      ...prev,
+      [field]: profile?.[field as keyof ProfileData]
+    }));
   };
 
   const handleCancel = () => {
@@ -69,8 +74,7 @@ export default function ProfilePage() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!profile) return;
 
     setSaving(true);
@@ -109,305 +113,332 @@ export default function ProfilePage() {
       <div className="container mx-auto py-8 p-5">
         <h1 className="text-2xl font-bold mb-6">Profile Settings</h1>
         <Card className="p-6 relative">
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Name field */}
-                <div className="space-y-2">
-                  <Label>Name</Label>
-                  <div className="flex items-center gap-2">
-                    {editingField === 'name' ? (
-                      <>
-                        <Input
-                          value={tempValues.name || ''}
-                          onChange={(e) => handleChange('name', e.target.value)}
-                        />
-                        <Button type="submit" size="sm">Save</Button>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Name field */}
+              <div className="space-y-2">
+                <Label>Name</Label>
+                <div className="flex items-center gap-1">
+                  {editingField === 'name' ? (
+                    <div className="flex items-center gap-2 w-full">
+                      <Input
+                        value={tempValues.name || ''}
+                        onChange={(e) => handleChange('name', e.target.value)}
+                        className="flex-1"
+                      />
+                      <div className="flex gap-2 shrink-0">
+                        <Button type="button" size="sm" onClick={handleSubmit}>Save</Button>
                         <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-lg">{profile.name}</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit('name')}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="text-lg">{profile.name}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit('name')}
+                        className="ml-1"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
                 </div>
-
-                {/* Age field */}
-                <div className="space-y-2">
-                  <Label>Age</Label>
-                  <div className="flex items-center gap-2">
-                    {editingField === 'age' ? (
-                      <>
-                        <Input
-                          type="number"
-                          value={tempValues.age || ''}
-                          onChange={(e) => handleChange('age', Number(e.target.value))}
-                        />
-                        <Button type="submit" size="sm">Save</Button>
-                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-lg">{profile.age} years</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit('age')}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Gender field */}
-                <div className="space-y-2">
-                  <Label>Gender</Label>
-                  <div className="flex items-center gap-2">
-                    {editingField === 'gender' ? (
-                      <>
-                        <Select
-                          value={tempValues.gender}
-                          onValueChange={(value: 'male' | 'female' | 'other') => handleChange('gender', value)}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select gender" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="male">Male</SelectItem>
-                            <SelectItem value="female">Female</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Button type="submit" size="sm">Save</Button>
-                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-lg capitalize">{profile.gender}</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit('gender')}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Height field */}
-                <div className="space-y-2">
-                  <Label>Height</Label>
-                  <div className="flex items-center gap-2">
-                    {editingField === 'height' ? (
-                      <>
-                        <Input
-                          type="number"
-                          value={tempValues.height || ''}
-                          onChange={(e) => handleChange('height', Number(e.target.value))}
-                        />
-                        <Button type="submit" size="sm">Save</Button>
-                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-lg">{profile.height} cm</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit('height')}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Current Weight field */}
-                <div className="space-y-2">
-                  <Label>Current Weight</Label>
-                  <div className="flex items-center gap-2">
-                    {editingField === 'currentWeight' ? (
-                      <>
-                        <Input
-                          type="number"
-                          step="0.1"
-                          value={tempValues.currentWeight || ''}
-                          onChange={(e) => handleChange('currentWeight', Number(e.target.value))}
-                        />
-                        <Button type="submit" size="sm">Save</Button>
-                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-lg">{profile.currentWeight} kg</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit('currentWeight')}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Goal Weight field */}
-                <div className="space-y-2">
-                  <Label>Goal Weight</Label>
-                  <div className="flex items-center gap-2">
-                    {editingField === 'goalWeight' ? (
-                      <>
-                        <Input
-                          type="number"
-                          step="0.1"
-                          value={tempValues.goalWeight || ''}
-                          onChange={(e) => handleChange('goalWeight', Number(e.target.value))}
-                        />
-                        <Button type="submit" size="sm">Save</Button>
-                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-lg">{profile.goalWeight} kg</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit('goalWeight')}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Target Weeks field */}
-                <div className="space-y-2">
-                  <Label>Target Weeks</Label>
-                  <div className="flex items-center gap-2">
-                    {editingField === 'targetWeeks' ? (
-                      <>
-                        <Input
-                          type="number"
-                          value={tempValues.targetWeeks || ''}
-                          onChange={(e) => handleChange('targetWeeks', Number(e.target.value))}
-                        />
-                        <Button type="submit" size="sm">Save</Button>
-                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-lg">{profile.targetWeeks} weeks</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit('targetWeeks')}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Activity Level field */}
-                <div className="space-y-2">
-                  <Label>Activity Level</Label>
-                  <div className="flex items-center gap-2">
-                    {editingField === 'activityLevel' ? (
-                      <>
-                        <Select
-                          value={tempValues.activityLevel}
-                          onValueChange={(value) => handleChange('activityLevel', value)}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select activity level" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="sedentary">Sedentary (Little or no exercise)</SelectItem>
-                            <SelectItem value="light">Light (Exercise 1-3 days/week)</SelectItem>
-                            <SelectItem value="moderate">Moderate (Exercise 3-5 days/week)</SelectItem>
-                            <SelectItem value="active">Active (Exercise 6-7 days/week)</SelectItem>
-                            <SelectItem value="very-active">Very Active (Hard daily exercise & physical job)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Button type="submit" size="sm">Save</Button>
-                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-lg capitalize">{profile.activityLevel.replace('-', ' ')}</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit('activityLevel')}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-
               </div>
 
-              <div className="mt-8 space-y-4">
-                <h2 className="text-xl font-semibold">Calculated Values</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label>Maintenance Calories</Label>
-                    <p className="text-lg">{profile.maintenanceCalories} kcal/day</p>
-                  </div>
-                  <div>
-                    <Label>Daily Calorie Target</Label>
-                    <p className="text-lg">{profile.dailyCalorieTarget} kcal/day</p>
-                  </div>
+              {/* Age field */}
+              <div className="space-y-2">
+                <Label>Age</Label>
+                <div className="flex items-center gap-1">
+                  {editingField === 'age' ? (
+                    <div className="flex items-center gap-2 w-full">
+                      <Input
+                        type="number"
+                        value={tempValues.age || ''}
+                        onChange={(e) => handleChange('age', Number(e.target.value))}
+                        className="flex-1"
+                      />
+                      <div className="flex gap-2 shrink-0">
+                        <Button type="button" size="sm" onClick={handleSubmit}>Save</Button>
+                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="text-lg">{profile.age} years</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit('age')}
+                        className="ml-1"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
                 </div>
+              </div>
 
-                <h3 className="text-lg font-semibold mt-4">Macronutrients</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div>
-                    <Label>Protein</Label>
-                    <p>{profile.macronutrients.protein}g</p>
-                  </div>
-                  <div>
-                    <Label>Carbs</Label>
-                    <p>{profile.macronutrients.carbs}g</p>
-                  </div>
-                  <div>
-                    <Label>Fats</Label>
-                    <p>{profile.macronutrients.fats}g</p>
-                  </div>
-                  <div>
-                    <Label>Fiber</Label>
-                    <p>{profile.macronutrients.fiber}g</p>
-                  </div>
+              {/* Gender field */}
+              <div className="space-y-2">
+                <Label>Gender</Label>
+                <div className="flex items-center gap-1">
+                  {editingField === 'gender' ? (
+                    <div className="flex items-center gap-2 w-full">
+                      <Select
+                        value={tempValues.gender}
+                        onValueChange={(value: 'male' | 'female' | 'other') => handleChange('gender', value)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <div className="flex gap-2 shrink-0">
+                        <Button type="button" size="sm" onClick={handleSubmit}>Save</Button>
+                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="text-lg">{profile.gender}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit('gender')}
+                        className="ml-1"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Height field */}
+              <div className="space-y-2">
+                <Label>Height</Label>
+                <div className="flex items-center gap-1">
+                  {editingField === 'height' ? (
+                    <div className="flex items-center gap-2 w-full">
+                      <Input
+                        type="number"
+                        value={tempValues.height || ''}
+                        onChange={(e) => handleChange('height', Number(e.target.value))}
+                        className="flex-1"
+                      />
+                      <div className="flex gap-2 shrink-0">
+                        <Button type="button" size="sm" onClick={handleSubmit}>Save</Button>
+                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="text-lg">{profile.height} cm</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit('height')}
+                        className="ml-1"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Current Weight field */}
+              <div className="space-y-2">
+                <Label>Current Weight</Label>
+                <div className="flex items-center gap-1">
+                  {editingField === 'currentWeight' ? (
+                    <div className="flex items-center gap-2 w-full">
+                      <Input
+                        type="number"
+                        step="0.1"
+                        value={tempValues.currentWeight || ''}
+                        onChange={(e) => handleChange('currentWeight', Number(e.target.value))}
+                        className="flex-1"
+                      />
+                      <div className="flex gap-2 shrink-0">
+                        <Button type="button" size="sm" onClick={handleSubmit}>Save</Button>
+                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="text-lg">{profile.currentWeight} kg</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit('currentWeight')}
+                        className="ml-1"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Goal Weight field */}
+              <div className="space-y-2">
+                <Label>Goal Weight</Label>
+                <div className="flex items-center gap-1">
+                  {editingField === 'goalWeight' ? (
+                    <div className="flex items-center gap-2 w-full">
+                      <Input
+                        type="number"
+                        step="0.1"
+                        value={tempValues.goalWeight || ''}
+                        onChange={(e) => handleChange('goalWeight', Number(e.target.value))}
+                        className="flex-1"
+                      />
+                      <div className="flex gap-2 shrink-0">
+                        <Button type="button" size="sm" onClick={handleSubmit}>Save</Button>
+                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="text-lg">{profile.goalWeight} kg</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit('goalWeight')}
+                        className="ml-1"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Target Weeks field */}
+              <div className="space-y-2">
+                <Label>Target Weeks</Label>
+                <div className="flex items-center gap-1">
+                  {editingField === 'targetWeeks' ? (
+                    <div className="flex items-center gap-2 w-full">
+                      <Input
+                        type="number"
+                        value={tempValues.targetWeeks || ''}
+                        onChange={(e) => handleChange('targetWeeks', Number(e.target.value))}
+                        className="flex-1"
+                      />
+                      <div className="flex gap-2 shrink-0">
+                        <Button type="button" size="sm" onClick={handleSubmit}>Save</Button>
+                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="text-lg">{profile.targetWeeks} weeks</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit('targetWeeks')}
+                        className="ml-1"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+               {/* Activity Level field */}
+               <div className="space-y-2">
+                <Label>Activity Level</Label>
+                <div className="flex items-center gap-1">
+                  {editingField === 'activityLevel' ? (
+                    <div className="flex flex-col w-full space-y-2">
+                      <Select
+                        value={tempValues.activityLevel}
+                        onValueChange={(value) => handleChange('activityLevel', value)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select activity level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sedentary">Sedentary (Little or no exercise)</SelectItem>
+                          <SelectItem value="light">Light (Exercise 1-3 days/week)</SelectItem>
+                          <SelectItem value="moderate">Moderate (Exercise 3-5 days/week)</SelectItem>
+                          <SelectItem value="active">Active (Exercise 6-7 days/week)</SelectItem>
+                          <SelectItem value="very-active">Very Active (Hard daily exercise & physical job)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <div className="flex gap-2 justify-start">
+                        <Button type="button" size="sm" onClick={handleSubmit}>Save</Button>
+                        <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="text-lg">{profile.activityLevel.replace('-', ' ')}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit('activityLevel')}
+                        className="ml-1"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+            </div>
+
+            <div className="mt-8 space-y-4">
+              <h2 className="text-xl font-semibold">Calculated Values</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Maintenance Calories</Label>
+                  <p className="text-lg">{profile.maintenanceCalories} kcal/day</p>
+                </div>
+                <div>
+                  <Label>Daily Calorie Target</Label>
+                  <p className="text-lg">{profile.dailyCalorieTarget} kcal/day</p>
+                </div>
+              </div>
+
+              <h3 className="text-lg font-semibold mt-4">Macronutrients</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <Label>Protein</Label>
+                  <p>{profile.macronutrients.protein}g</p>
+                </div>
+                <div>
+                  <Label>Carbs</Label>
+                  <p>{profile.macronutrients.carbs}g</p>
+                </div>
+                <div>
+                  <Label>Fats</Label>
+                  <p>{profile.macronutrients.fats}g</p>
+                </div>
+                <div>
+                  <Label>Fiber</Label>
+                  <p>{profile.macronutrients.fiber}g</p>
                 </div>
               </div>
             </div>
-          </form>
+          </div>
         </Card>
       </div>
     </div>

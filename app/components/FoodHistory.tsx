@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { format, startOfDay, endOfDay } from 'date-fns';
-import { Pencil, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Pencil, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
@@ -82,6 +82,28 @@ export function FoodHistory({ logs, onUpdate }: FoodHistoryProps) {
     }
   };
 
+  const handleDeleteLog = async (log: FoodLog) => {
+    if (!log._id) return;
+    
+    try {
+      const response = await fetch(`/api/food-logs?id=${log._id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) throw new Error('Failed to delete food log');
+      
+      // Update local state immediately
+      setLocalLogs(prev => prev.filter(l => l._id !== log._id));
+      
+      // Notify parent component
+      if (onUpdate) {
+        await onUpdate(log);
+      }
+    } catch (error) {
+      console.error('Error deleting food log:', error);
+    }
+  };
+
   const selectedDayLogs = localLogs.filter(log => {
     const logDate = new Date(log.date);
     const start = startOfDay(selectedDate);
@@ -100,7 +122,7 @@ export function FoodHistory({ logs, onUpdate }: FoodHistoryProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Food History</CardTitle>
+        <CardTitle>Meal History</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="grid grid-cols-1 divide-y">
@@ -130,6 +152,9 @@ export function FoodHistory({ logs, onUpdate }: FoodHistoryProps) {
               <span className="bg-secondary/20 px-2 py-1 rounded-full">
                 F: {totalMacros.fat}g
               </span>
+              <span className="bg-secondary/20 px-2 py-1 rounded-full">
+                Fr: {totalMacros.fiber}g
+              </span>
             </div>
           </div>
           
@@ -150,120 +175,130 @@ export function FoodHistory({ logs, onUpdate }: FoodHistoryProps) {
                           <p className="text-xs whitespace-nowrap text-muted-foreground">
                             {format(new Date(log.date), 'h:mm a')}
                           </p>
-                          <Sheet open={isEditing && editingLog?._id === log._id} onOpenChange={(open) => {
-                            setIsEditing(open);
-                            if (open) setEditingLog(log);
-                            else setEditingLog(null);
-                          }}>
-                            <SheetTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                            </SheetTrigger>
-                            <SheetContent>
-                              <SheetHeader>
-                                <SheetTitle>Edit Food Log</SheetTitle>
-                                <SheetDescription>
-                                  Make changes to your food log entry.
-                                </SheetDescription>
-                              </SheetHeader>
-                              {editingLog && (
-                                <div className="space-y-4 mt-4">
-                                  <div className="space-y-2">
-                                    <Label htmlFor="edit-description">Description</Label>
-                                    <Input
-                                      id="edit-description"
-                                      value={editingLog.description}
-                                      onChange={(e) => setEditingLog({
-                                        ...editingLog,
-                                        description: e.target.value
-                                      })}
-                                    />
+                          <div className="flex items-center gap-2">
+                            <Sheet open={isEditing && editingLog?._id === log._id} onOpenChange={(open) => {
+                              setIsEditing(open);
+                              if (open) setEditingLog(log);
+                              else setEditingLog(null);
+                            }}>
+                              <SheetTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                              </SheetTrigger>
+                              <SheetContent title=''>
+                                <SheetHeader>
+                                  <SheetTitle>Edit Food Log</SheetTitle>
+                                  <SheetDescription>
+                                    Make changes to your food log entry.
+                                  </SheetDescription>
+                                </SheetHeader>
+                                {editingLog && (
+                                  <div className="space-y-4 mt-4">
+                                    <div className="space-y-2">
+                                      <Label htmlFor="edit-description">Description</Label>
+                                      <Input
+                                        id="edit-description"
+                                        value={editingLog.description}
+                                        onChange={(e) => setEditingLog({
+                                          ...editingLog,
+                                          description: e.target.value
+                                        })}
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label htmlFor="edit-calories">Calories</Label>
+                                      <Input
+                                        id="edit-calories"
+                                        type="number"
+                                        value={editingLog.calories}
+                                        onChange={(e) => setEditingLog({
+                                          ...editingLog,
+                                          calories: Number(e.target.value)
+                                        })}
+                                      />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                      <div className="space-y-2">
+                                        <Label htmlFor="edit-protein">Protein (g)</Label>
+                                        <Input
+                                          id="edit-protein"
+                                          type="number"
+                                          value={editingLog.macros.protein}
+                                          onChange={(e) => setEditingLog({
+                                            ...editingLog,
+                                            macros: {
+                                              ...editingLog.macros,
+                                              protein: Number(e.target.value)
+                                            }
+                                          })}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="edit-carbs">Carbs (g)</Label>
+                                        <Input
+                                          id="edit-carbs"
+                                          type="number"
+                                          value={editingLog.macros.carbs}
+                                          onChange={(e) => setEditingLog({
+                                            ...editingLog,
+                                            macros: {
+                                              ...editingLog.macros,
+                                              carbs: Number(e.target.value)
+                                            }
+                                          })}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="edit-fat">Fat (g)</Label>
+                                        <Input
+                                          id="edit-fat"
+                                          type="number"
+                                          value={editingLog.macros.fat}
+                                          onChange={(e) => setEditingLog({
+                                            ...editingLog,
+                                            macros: {
+                                              ...editingLog.macros,
+                                              fat: Number(e.target.value)
+                                            }
+                                          })}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="edit-fiber">Fiber (g)</Label>
+                                        <Input
+                                          id="edit-fiber"
+                                          type="number"
+                                          value={editingLog.macros.fiber}
+                                          onChange={(e) => setEditingLog({
+                                            ...editingLog,
+                                            macros: {
+                                              ...editingLog.macros,
+                                              fiber: Number(e.target.value)
+                                            }
+                                          })}
+                                        />
+                                      </div>
+                                    </div>
+                                    <Button 
+                                      className="w-full mt-6"
+                                      onClick={() => editingLog && handleEditLog(editingLog)}
+                                    >
+                                      Save Changes
+                                    </Button>
                                   </div>
-                                  <div className="space-y-2">
-                                    <Label htmlFor="edit-calories">Calories</Label>
-                                    <Input
-                                      id="edit-calories"
-                                      type="number"
-                                      value={editingLog.calories}
-                                      onChange={(e) => setEditingLog({
-                                        ...editingLog,
-                                        calories: Number(e.target.value)
-                                      })}
-                                    />
-                                  </div>
-                                  <div className="grid grid-cols-2 gap-3">
-                                    <div className="space-y-2">
-                                      <Label htmlFor="edit-protein">Protein (g)</Label>
-                                      <Input
-                                        id="edit-protein"
-                                        type="number"
-                                        value={editingLog.macros.protein}
-                                        onChange={(e) => setEditingLog({
-                                          ...editingLog,
-                                          macros: {
-                                            ...editingLog.macros,
-                                            protein: Number(e.target.value)
-                                          }
-                                        })}
-                                      />
-                                    </div>
-                                    <div className="space-y-2">
-                                      <Label htmlFor="edit-carbs">Carbs (g)</Label>
-                                      <Input
-                                        id="edit-carbs"
-                                        type="number"
-                                        value={editingLog.macros.carbs}
-                                        onChange={(e) => setEditingLog({
-                                          ...editingLog,
-                                          macros: {
-                                            ...editingLog.macros,
-                                            carbs: Number(e.target.value)
-                                          }
-                                        })}
-                                      />
-                                    </div>
-                                    <div className="space-y-2">
-                                      <Label htmlFor="edit-fat">Fat (g)</Label>
-                                      <Input
-                                        id="edit-fat"
-                                        type="number"
-                                        value={editingLog.macros.fat}
-                                        onChange={(e) => setEditingLog({
-                                          ...editingLog,
-                                          macros: {
-                                            ...editingLog.macros,
-                                            fat: Number(e.target.value)
-                                          }
-                                        })}
-                                      />
-                                    </div>
-                                    <div className="space-y-2">
-                                      <Label htmlFor="edit-fiber">Fiber (g)</Label>
-                                      <Input
-                                        id="edit-fiber"
-                                        type="number"
-                                        value={editingLog.macros.fiber}
-                                        onChange={(e) => setEditingLog({
-                                          ...editingLog,
-                                          macros: {
-                                            ...editingLog.macros,
-                                            fiber: Number(e.target.value)
-                                          }
-                                        })}
-                                      />
-                                    </div>
-                                  </div>
-                                  <Button 
-                                    className="w-full mt-6"
-                                    onClick={() => editingLog && handleEditLog(editingLog)}
-                                  >
-                                    Save Changes
-                                  </Button>
-                                </div>
-                              )}
-                            </SheetContent>
-                          </Sheet>
+                                )}
+                              </SheetContent>
+                            </Sheet>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive"
+                              onClick={() => handleDeleteLog(log)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 text-sm">

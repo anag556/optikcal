@@ -131,3 +131,45 @@ export async function PATCH(request: NextRequest) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    await connectToDatabase();
+    
+    // Get the food log ID from the URL
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    
+    if (!id) {
+      return NextResponse.json({ error: 'Food log ID is required' }, { status: 400 });
+    }
+
+    // Find the user's ID from their email
+    const User = mongoose.models.User;
+    const user = await User.findOne({ email: session.user.email });
+    
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Find and delete the food log, ensuring it belongs to the user
+    const foodLog = await FoodLog.findOneAndDelete({ _id: id, userId: user._id });
+
+    if (!foodLog) {
+      return NextResponse.json({ error: 'Food log not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting food log:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete food log' },
+      { status: 500 }
+    );
+  }
+}

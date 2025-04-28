@@ -17,9 +17,11 @@ const Navbar = () => {
 
   const navItems = [
     { label: "Dashboard", href: "/dashboard" },
-    { label: "Log Meal", href: "/log" },
+    { label: "Log Meal", href: "/food-log" },
     { label: "My Log", href: "/calendar" },
     { label: "Profile", href: "/profile" },
+    { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
   ];
 
   return (
@@ -69,7 +71,7 @@ const Navbar = () => {
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="pr-0">
+          <SheetContent title="" side="right" className="pr-0">
             <div className="flex flex-col gap-4 pt-6">
               {navItems.map((item) => (
                 <Link
