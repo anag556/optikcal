@@ -71,7 +71,7 @@ const Navbar = () => {
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="pr-0">
+          <SheetContent side="right" className="pr-0" title="Navigation Menu">
             <div className="flex flex-col gap-4 pt-6">
               {navItems.map((item) => (
                 <Link

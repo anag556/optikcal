@@ -4,6 +4,17 @@ import connectToDatabase from "@/lib/db";
 import { User } from "@/lib/models/User";
 import bcrypt from "bcrypt";
 
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    }
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({

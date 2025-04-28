@@ -29,5 +29,5 @@ export async function middleware(request: NextRequestWithAuth) {
 
 // Configure the middleware to match specific paths
 export const config = {
-  matcher: [...publicRoutes, ...authRoutes]
+  matcher: ['/', '/login', '/signup', '/dashboard', '/profile', '/calendar', '/food-log']
 }

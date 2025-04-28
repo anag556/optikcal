@@ -127,9 +127,7 @@ export default function ProfilePage() {
                         className="flex-1"
                       />
                       <div className="flex gap-2 shrink-0">
-                        <Button type="button" size="sm" onClick={handleSubmit} disabled={saving}>
-                          {saving ? "Saving..." : "Save"}
-                        </Button>
+                        <Button type="button" size="sm" onClick={handleSubmit}>Save</Button>
                         <Button type="button" variant="outline" size="sm" onClick={handleCancel}>Cancel</Button>
                       </div>
                     </div>
