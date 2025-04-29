@@ -20,8 +20,7 @@ const Navbar = () => {
     { label: "Log Meal", href: "/food-log" },
     { label: "My Log", href: "/calendar" },
     { label: "Profile", href: "/profile" },
-    { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
+    { label: "Contact Us", href: "/contact-for-user" },
   ];
 
   return (
