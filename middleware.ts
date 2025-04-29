@@ -8,6 +8,11 @@ const publicRoutes = ['/', '/login', '/signup']
 const authRoutes = ['/dashboard', '/profile', '/calendar', '/food-log']
 
 export async function middleware(request: NextRequestWithAuth) {
+  // Skip middleware for POST requests to login
+  if (request.method === "POST" && request.nextUrl.pathname === "/login") {
+    return NextResponse.next()
+  }
+
   const token = await getToken({ req: request })
   const isAuthenticated = !!token
   const path = request.nextUrl.pathname
