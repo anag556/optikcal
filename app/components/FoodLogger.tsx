@@ -114,7 +114,7 @@ export function FoodLogger({ onLogFood }: { onLogFood: (log: FoodLogData) => voi
     <Card className="p-4 w-full max-w-md mx-auto lg:max-w-none">
       <div className="space-y-4">
         <div>
-          <Label htmlFor="food-image" className="block mb-2">Food Image</Label>
+          <Label htmlFor="food-image" className="block mb-2">Meal Image</Label>
           <input
             type="file"
             accept="image/*"
@@ -251,7 +251,7 @@ export function FoodLogger({ onLogFood }: { onLogFood: (log: FoodLogData) => voi
           disabled={(!calories || !description) || isSubmitting}
           className="w-full h-12 text-base font-medium"
         >
-          {isSubmitting ? 'Logging...' : 'Log Food'}
+          {isSubmitting ? 'Logging...' : 'Log Meal'}
         </Button>
       </div>
     </Card>
