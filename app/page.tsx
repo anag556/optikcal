@@ -24,7 +24,6 @@ export default function Home() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold mb-2">Loading...</h2>
-          <p>Checking authentication status</p>
         </div>
       </div>
     );
@@ -37,7 +36,7 @@ export default function Home() {
       <div className="max-w-3xl text-center pt-25 p-4">
         <h1 className="text-4xl font-bold mb-6">Weight Tracker</h1>
         <p className="text-lg mb-8">
-          Track your weight, set goals, and achieve your fitness targets
+          Track your calories, set goals, and achieve your fitness targets
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild size="lg">
