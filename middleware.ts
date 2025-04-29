@@ -4,16 +4,16 @@ import { getToken } from 'next-auth/jwt';
 
 // Define protected routes that require authentication
 const protectedRoutes = [
-  '/dashboard',
-  '/profile',
-  '/food-log',
-  '/calendar',
+  'https://optikcal.vercel.app//dashboard',
+  'https://optikcal.vercel.app//profile',
+  'https://optikcal.vercel.app//food-log',
+  'https://optikcal.vercel.app//calendar',
 ];
 
 // Define authentication routes (login/signup) that should redirect to dashboard if already logged in
 const authRoutes = [
-  '/login',
-  '/signup',
+  'https://optikcal.vercel.app//login',
+  'https://optikcal.vercel.app//signup',
 ];
 
 export async function middleware(request: NextRequest) {
