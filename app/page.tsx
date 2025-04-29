@@ -1,8 +1,36 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Navbar from "./components/landingNav";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  // When session is loaded and user is authenticated, redirect to dashboard
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push('/dashboard');
+    }
+  }, [status, router]);
+
+  // While checking authentication status, show loading indicator
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Loading...</h2>
+          <p>Checking authentication status</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If user is not authenticated, show the landing page
   return (
     <main className="min-h-screen flex-col items-center justify-center">
       <Navbar />
