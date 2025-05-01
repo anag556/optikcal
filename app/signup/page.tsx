@@ -3,9 +3,9 @@ import Navbar from "../components/landingNav";
 
 export default function SignupPage() {
   return (
-    <main className="min-h-screen flex-col items-center justify-center">
+    <main className="min-h-screen">
       <Navbar />
-      <div className="max-w-3xl text-center pt-5 p-4">
+      <div className="text-center align-middle pt-5 p-4">
         <SignupForm />
       </div>
     </main>

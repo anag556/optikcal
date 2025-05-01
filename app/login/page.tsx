@@ -6,7 +6,7 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen items-center justify-center">
       <Navbar />
-      <div className="w-full flex items-center justify-center max-w-md pt-5 p-4">
+      <div className="items-center justify-center pt-5 p-4">
         <Suspense fallback={<div>Loading...</div>}>
           <LoginForm />
         </Suspense>

@@ -51,12 +51,16 @@ const Navbar = () => {
 
         {/* Action Buttons - Desktop */}
         <div className="hidden md:flex items-center gap-4">
+          <Link href="/login">
           <Button variant="outline" size="sm">
             Log In
           </Button>
+          </Link>
+          <Link href="/signup">
           <Button size="sm">
             Sign Up
           </Button>
+          </Link>
         </div>
 
         {/* Mobile Navigation */}
