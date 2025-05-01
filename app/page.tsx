@@ -37,11 +37,8 @@ export default function Home() {
       <div className="max-w-5xl mx-auto text-center pt-16 p-4">
         <h1 className="text-4xl font-bold mb-6">OptiKcal</h1>
         <div className="mt-16">
-          <h2 className="text-2xl font-semibold mb-6">Try Our Food Analysis Tool</h2>
-          <p className="text-md mb-8 max-w-2xl mx-auto">
-            Upload a photo of your meal and instantly get nutritional information.
-            Sign up to save your meal logs, set goals and track your progress over time.
-          </p>
+          <h2 className="text-2xl font-semibold mb-6">Try Our Meal Analysis Tool</h2>
+          
           <SimpleFoodAnalyzer />
         </div>
         <p className="text-lg mb-8 pt-8">

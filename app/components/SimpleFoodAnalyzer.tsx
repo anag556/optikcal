@@ -75,7 +75,7 @@ export function SimpleFoodAnalyzer() {
     <Card className="p-6 w-full max-w-md mx-auto">
       <div className="space-y-6">
         <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">Free Food Analyzer</h2>
+          <h2 className="text-xl font-semibold mb-2">Free Meal Analyzer</h2>
           <p className="text-muted-foreground text-sm">
             Upload a photo of your meal to get an instant nutritional breakdown.
             <br />
