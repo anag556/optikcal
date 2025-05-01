@@ -6,8 +6,8 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "OptiKcal - Weight Tracker",
-  description: "Track your weight and achieve your fitness goals",
+  title: "OptiKcal - AI Calorie Tracker",
+  description: "Track your Calories and achieve your fitness goals",
 };
 
 export const viewport: Viewport = {
